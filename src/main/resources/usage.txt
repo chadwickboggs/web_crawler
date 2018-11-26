@@ -1,0 +1,32 @@
+DESCRIPTION:
+
+    Web Crawler will scan the specified site outputing a sitemap.
+
+
+USAGE:
+
+    $ <Web Crawler Home>/bin/web_crawler.sh <OPTIONS>
+
+        At least one of the following options must be specified.
+
+    OPTIONS:
+        -h | --help                         Prints help message.
+        -u | --usage                        Prints usage instruction.
+        -t          <target home page URL>  Scans the site at the given target homepage.
+        --target    <target home page URL>  Scans the site at the given target homepage.
+
+
+EXAMPLE:
+
+    $ bin/web_crawler.sh -t http://chadwickboggs.com
+    http://chadwickboggs.com
+    	http://chadwickboggs.com/resume.pdf
+    	http://chadwickboggs.com/resume.txt
+    	http://chadwickboggs.com/resume.rtf
+    	http://chadwickboggs.com/resume.epub
+    	http://chadwickboggs.com/resume.docx
+    	http://chadwickboggs.com/favicon.ico
+    	http://chadwickboggs.com/resume.html
+    	http://chadwickboggs.com/resume.pages
+    	http://chadwickboggs.com/resume.odt
+    	http://chadwickboggs.com/resume.doc
