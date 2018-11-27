@@ -1,5 +1,7 @@
 package com.chadwickboggs.interview.wipro.buildit.webcrawler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,39 +36,45 @@ public final class CommandLine {
         protected final boolean required;
 
 
-        public Arg(Character symbol) {
+        public Arg(@Nonnull final Character symbol) {
+
             this.symbol = symbol;
             this.name = null;
             this.required = false;
         }
 
 
-        public Arg(Character symbol, boolean required) {
+        public Arg(@Nonnull final Character symbol, boolean required) {
+
             this.symbol = symbol;
             this.name = null;
             this.required = required;
         }
 
 
-        public Arg(Character symbol, String name) {
+        public Arg(@Nonnull final Character symbol, @Nonnull final String name) {
+
             this.symbol = symbol;
             this.name = name;
             this.required = false;
         }
 
 
-        public Arg(Character symbol, String name, boolean required) {
+        public Arg(@Nonnull final Character symbol, @Nonnull final String name, boolean required) {
+
             this.symbol = symbol;
             this.name = name;
             this.required = required;
         }
 
 
+        @Nullable
         public Character getSymbol() {
             return symbol;
         }
 
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -77,6 +85,7 @@ public final class CommandLine {
         }
 
 
+        @Nullable
         public String toValue() {
 
             StringBuilder buf = new StringBuilder();
@@ -92,6 +101,7 @@ public final class CommandLine {
 
 
         @Override
+        @Nullable
         public String toString() {
 
             return "Arg{"
@@ -103,7 +113,7 @@ public final class CommandLine {
 
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nonnull final Object o) {
 
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -125,19 +135,19 @@ public final class CommandLine {
         private String argument;
 
 
-        public ArgWithArgument(Character symbol) {
+        public ArgWithArgument(@Nonnull final Character symbol) {
 
             super(symbol);
         }
 
 
-        public ArgWithArgument(Character symbol, boolean required) {
+        public ArgWithArgument(@Nonnull final Character symbol, boolean required) {
 
             super(symbol, required);
         }
 
 
-        public ArgWithArgument(Character symbol, String argument) {
+        public ArgWithArgument(@Nonnull final Character symbol, @Nonnull final String argument) {
 
             super(symbol);
 
@@ -145,7 +155,7 @@ public final class CommandLine {
         }
 
 
-        public ArgWithArgument(Character symbol, boolean required, String argument) {
+        public ArgWithArgument(@Nonnull final Character symbol, boolean required, @Nonnull final String argument) {
 
             super(symbol, required);
 
@@ -153,7 +163,7 @@ public final class CommandLine {
         }
 
 
-        public ArgWithArgument(Character symbol, String name, String argument) {
+        public ArgWithArgument(@Nonnull final Character symbol, String name, @Nonnull final String argument) {
 
             super(symbol, name);
 
@@ -161,7 +171,9 @@ public final class CommandLine {
         }
 
 
-        public ArgWithArgument(final Character symbol, final String name, boolean required, final String argument) {
+        public ArgWithArgument(
+            @Nonnull final Character symbol, @Nonnull final String name, boolean required,
+            @Nonnull final String argument) {
 
             super(symbol, name, required);
 
@@ -169,16 +181,18 @@ public final class CommandLine {
         }
 
 
+        @Nullable
         public String getArgument() {
             return argument;
         }
 
 
-        public void setArgument(final String argument) {
+        public void setArgument(@Nonnull final String argument) {
             this.argument = argument;
         }
 
 
+        @Nonnull
         public String toValue() {
 
             StringBuilder buf = new StringBuilder();
@@ -197,6 +211,7 @@ public final class CommandLine {
         }
 
 
+        @Nonnull
         @Override
         public String toString() {
 
@@ -209,7 +224,8 @@ public final class CommandLine {
     }
 
 
-    public final CommandLine registerArg(final Arg arg) {
+    @Nonnull
+    public final CommandLine registerArg(@Nonnull final Arg arg) {
 
         registeredArgs.put("-" + arg.getSymbol(), arg);
 
@@ -217,7 +233,8 @@ public final class CommandLine {
     }
 
 
-    public final Set<Arg> parseArgs(String... args) throws ArgsInvalidException {
+    @Nonnull
+    public final Set<Arg> parseArgs(@Nonnull final String... args) throws ArgsInvalidException {
 
         Set<Arg> commandLineArgs = new HashSet<>();
         if (requiredCount > 0 && (args == null || args.length < requiredCount)) {
@@ -255,7 +272,8 @@ public final class CommandLine {
     }
 
 
-    private final Optional<Arg> parseArg(final String argString) {
+    @Nonnull
+    private final Optional<Arg> parseArg(@Nonnull final String argString) {
 
         final String argStringTrimmed = argString.trim();
         if (argStringTrimmed.length() == 0) {
@@ -271,11 +289,13 @@ public final class CommandLine {
     }
 
 
+    @Nonnull
     public Map<String, Arg> getRegisteredArgs() {
         return new HashMap(registeredArgs);
     }
 
 
+    @Nonnull
     public Set<Arg> getParsedArgs() {
 
         return new HashSet<>(parsedArgs);

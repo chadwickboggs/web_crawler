@@ -1,5 +1,7 @@
 package com.chadwickboggs.interview.wipro.buildit.webcrawler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +27,7 @@ public final class WebCrawler implements Runnable {
     private String domainName;
 
 
-    public static final void main(String... args) {
+    public static final void main(@Nullable final String... args) {
 
         try {
             // TODO: Usage a configurable threadpool.
@@ -40,7 +42,10 @@ public final class WebCrawler implements Runnable {
     }
 
 
-    public static CommandLine parseCommandLineArguments(String[] args) throws ArgsInvalidException {
+    @Nonnull
+    public static CommandLine parseCommandLineArguments(@Nullable final String... args)
+        throws ArgsInvalidException {
+
         CommandLine commandLine = new CommandLine();
         commandLine.registerArg(new CommandLine.Arg('h', "help", false));
         commandLine.registerArg(new CommandLine.Arg('u', "usage", false));
@@ -55,6 +60,7 @@ public final class WebCrawler implements Runnable {
     }
 
 
+    @Nonnull
     private static final String getUsage() {
 
         StringBuilder buf = new StringBuilder();
@@ -79,7 +85,7 @@ public final class WebCrawler implements Runnable {
     }
 
 
-    public WebCrawler(final CommandLine commandLine) {
+    public WebCrawler(@Nonnull final CommandLine commandLine) {
 
         this.commandLine = commandLine;
     }
@@ -116,12 +122,16 @@ public final class WebCrawler implements Runnable {
                 webCrawl(startUrl, domainNameLimit, 0, new HashSet<URL>(), System.out);
             }
             catch (MalformedURLException e) {
-                System.err.println(String.format("Unable to parse target URL.  Target URL: %s", urlString));
+                System.err.println(String.format(
+                    "Unable to parse target URL.  Target URL: \"%s\"", urlString
+                ));
 
                 System.exit(4);
             }
             catch (IOException e) {
-                System.err.println(String.format("Error reading URL.  Target URL: %s", urlString));
+                System.err.println(String.format(
+                    "Error reading URL.  Target URL: \"%s\"", urlString
+                ));
 
                 System.exit(5);
             }
@@ -130,9 +140,16 @@ public final class WebCrawler implements Runnable {
     }
 
 
-    private String extractDomainName(final URL startUrl) {
+    @Nonnull
+    private String extractDomainName(@Nonnull final URL startUrl) {
 
         String[] split = startUrl.getHost().split("\\.");
+        if (split.length < 2) {
+            throw new RuntimeException(String.format(
+                "URL must contain at least one '.' character.  URL: \"%s\"", startUrl
+            ));
+        }
+
         StringBuilder buf = new StringBuilder();
         buf.append(split[split.length - 2]).append(".").append(split[split.length - 1]);
 
@@ -141,8 +158,8 @@ public final class WebCrawler implements Runnable {
 
 
     private void webCrawl(
-        final URL startUrl, final String domainNameLimit, int depth, final Set<URL> siteMapUrls,
-        final PrintStream printStream
+        @Nonnull final URL startUrl, @Nonnull final String domainNameLimit, int depth,
+        @Nonnull final Set<URL> siteMapUrls, @Nonnull final PrintStream printStream
     ) throws IOException {
 
         if (siteMapUrls.contains(startUrl)) {
@@ -164,13 +181,16 @@ public final class WebCrawler implements Runnable {
                 webCrawl(url, domainNameLimit, depth + 1, siteMapUrls, printStream);
             }
             catch (Exception e) {
-                System.err.println(String.format("Error crawling url.  URL: %s", url.toString()));
+                System.err.println(String.format(
+                    "Error crawling url.  URL: \"%s\"", url.toString()
+                ));
             }
         });
     }
 
 
-    private Set<URL> listUrls(final URL url) throws IOException {
+    @Nonnull
+    private Set<URL> listUrls(@Nonnull final URL url) throws IOException {
 
         String line;
         BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
