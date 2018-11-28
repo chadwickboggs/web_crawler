@@ -153,7 +153,7 @@ public final class WebCrawler implements Runnable {
         StringBuilder buf = new StringBuilder();
         buf.append(split[split.length - 2]).append(".").append(split[split.length - 1]);
 
-        return  buf.toString().toLowerCase();
+        return buf.toString().toLowerCase();
     }
 
 
@@ -177,15 +177,15 @@ public final class WebCrawler implements Runnable {
             .filter(url -> !startUrl.equals(url))
             .filter(url -> domainNameLimit.equals(extractDomainName(url)))
             .forEach(url -> {
-            try {
-                webCrawl(url, domainNameLimit, depth + 1, siteMapUrls, printStream);
-            }
-            catch (Exception e) {
-                System.err.println(String.format(
-                    "Error crawling url.  URL: \"%s\"", url.toString()
-                ));
-            }
-        });
+                try {
+                    webCrawl(url, domainNameLimit, depth + 1, siteMapUrls, printStream);
+                }
+                catch (Exception e) {
+                    System.err.println(String.format(
+                        "Error crawling url.  URL: \"%s\"", url.toString()
+                    ));
+                }
+            });
     }
 
 
