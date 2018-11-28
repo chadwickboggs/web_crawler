@@ -1,7 +1,5 @@
 package com.chadwickboggs.interview.wipro.buildit.webcrawler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 public final class CommandLine {
@@ -36,6 +36,11 @@ public final class CommandLine {
         protected final boolean required;
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         */
         public Arg(@Nonnull final Character symbol) {
 
             this.symbol = symbol;
@@ -44,6 +49,12 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param required true if this command line option is a required option.
+         */
         public Arg(@Nonnull final Character symbol, boolean required) {
 
             this.symbol = symbol;
@@ -52,6 +63,12 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param name the name.
+         */
         public Arg(@Nonnull final Character symbol, @Nonnull final String name) {
 
             this.symbol = symbol;
@@ -60,6 +77,13 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param name the name.
+         * @param required true if this command line option is a required option.
+         */
         public Arg(@Nonnull final Character symbol, @Nonnull final String name, boolean required) {
 
             this.symbol = symbol;
@@ -85,6 +109,11 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Returns the command line format representation of this option.
+         *
+         * @return the command line format representation of this option.
+         */
         @Nullable
         public String toValue() {
 
@@ -135,18 +164,35 @@ public final class CommandLine {
         private String argument;
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         */
         public ArgWithArgument(@Nonnull final Character symbol) {
 
             super(symbol);
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param required true if this command line option is a required option.
+         */
         public ArgWithArgument(@Nonnull final Character symbol, boolean required) {
 
             super(symbol, required);
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param argument the argument.
+         */
         public ArgWithArgument(@Nonnull final Character symbol, @Nonnull final String argument) {
 
             super(symbol);
@@ -155,6 +201,13 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param argument the argument.
+         * @param required true if this command line option is a required option.
+         */
         public ArgWithArgument(@Nonnull final Character symbol, boolean required, @Nonnull final String argument) {
 
             super(symbol, required);
@@ -163,6 +216,13 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param argument the argument.
+         * @param name the name.
+         */
         public ArgWithArgument(@Nonnull final Character symbol, String name, @Nonnull final String argument) {
 
             super(symbol, name);
@@ -171,6 +231,14 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Construct instance.
+         *
+         * @param symbol the symbol.
+         * @param name the name.
+         * @param argument the argument.
+         * @param required true if this command line option is a required option.
+         */
         public ArgWithArgument(
             @Nonnull final Character symbol, @Nonnull final String name, boolean required,
             @Nonnull final String argument) {
@@ -192,6 +260,11 @@ public final class CommandLine {
         }
 
 
+        /**
+         * Returns the command line format representation of this option.
+         *
+         * @return the command line format representation of this option.
+         */
         @Nonnull
         public String toValue() {
 
@@ -215,15 +288,21 @@ public final class CommandLine {
         @Override
         public String toString() {
 
-            return "Arg{" +
-                "symbol='" + symbol + '\'' +
-                ", name='" + name + '\'' +
-                ", argument='" + argument + '\'' +
-                '}';
+            return "Arg{"
+                + "symbol='" + symbol + '\''
+                + ", name='" + name + '\''
+                + ", argument='" + argument + '\''
+                + '}';
         }
     }
 
 
+    /**
+     * Register an a command line argument.
+     *
+     * @param arg the command line argument.
+     * @return this command line instance.
+     */
     @Nonnull
     public final CommandLine registerArg(@Nonnull final Arg arg) {
 
@@ -233,6 +312,13 @@ public final class CommandLine {
     }
 
 
+    /**
+     * Parse command line arguments into a collection of Arg instances.
+     *
+     * @param args the command line arguments.
+     * @return the parsed Arg instances.
+     * @throws ArgsInvalidException on invalid command line arguments.
+     */
     @Nonnull
     public final Set<Arg> parseArgs(@Nonnull final String... args) throws ArgsInvalidException {
 

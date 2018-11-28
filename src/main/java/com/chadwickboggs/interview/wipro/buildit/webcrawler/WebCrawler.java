@@ -1,7 +1,5 @@
 package com.chadwickboggs.interview.wipro.buildit.webcrawler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,20 +12,34 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
+/**
+ * Web Crawler scans a site building a sitemap.  It takes the root homepage to
+ * start at as a command line parameter.  Its scans for links on that page within
+ * the same domain and scans them.  Its output is a tab indented one page per
+ * line.
+ */
 public final class WebCrawler implements Runnable {
 
-    private static final String USAGE_FILENAME = "usage.txt";
     public static final Pattern URL_PATTERN = Pattern.compile(
         " href=['\"]([^']|[^\"]*)['\"]", Pattern.CASE_INSENSITIVE
     );
+
+    private static final String USAGE_FILENAME = "usage.txt";
 
     private CommandLine commandLine;
     private String domainName;
 
 
-    public static final void main(@Nullable final String... args) {
+    /**
+     * Command line run method.
+     *
+     * @param args command line arguments.
+     */
+    public static void main(@Nullable final String... args) {
 
         try {
             // TODO: Usage a configurable threadpool.
@@ -42,6 +54,13 @@ public final class WebCrawler implements Runnable {
     }
 
 
+    /**
+     * Parse command line arguments into a CommandLine instance.
+     *
+     * @param args the command line arguments.
+     * @return A new CommandLine instances for the parsed arguments.
+     * @throws ArgsInvalidException on invalid arguments.
+     */
     @Nonnull
     public static CommandLine parseCommandLineArguments(@Nullable final String... args)
         throws ArgsInvalidException {
@@ -85,6 +104,11 @@ public final class WebCrawler implements Runnable {
     }
 
 
+    /**
+     * Create instance.
+     *
+     * @param commandLine the command line.
+     */
     public WebCrawler(@Nonnull final CommandLine commandLine) {
 
         this.commandLine = commandLine;
@@ -96,8 +120,8 @@ public final class WebCrawler implements Runnable {
 
         Set<CommandLine.Arg> parsedArgs = commandLine.getParsedArgs();
 
-        if (parsedArgs.contains(new CommandLine.Arg('h')) ||
-            parsedArgs.contains(new CommandLine.Arg('u'))) {
+        if (parsedArgs.contains(new CommandLine.Arg('h'))
+            || parsedArgs.contains(new CommandLine.Arg('u'))) {
 
             System.out.println(getUsage());
 
