@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public final class CommandLine {
 
-    private Map<String, Arg> registeredArgs = new HashMap<>();
+    private final Map<String, Arg> registeredArgs = new HashMap<>();
     private Set<Arg> parsedArgs = new HashSet<>();
     private int requiredCount;
 
@@ -199,7 +199,7 @@ public final class CommandLine {
 
             super(symbol);
 
-            this.argument = null;
+            this.argument = argument;
         }
 
 
@@ -214,7 +214,7 @@ public final class CommandLine {
 
             super(symbol, required);
 
-            this.argument = null;
+            this.argument = argument;
         }
 
 
@@ -229,7 +229,7 @@ public final class CommandLine {
 
             super(symbol, name);
 
-            this.argument = null;
+            this.argument = argument;
         }
 
 
@@ -306,7 +306,7 @@ public final class CommandLine {
      * @return this command line instance.
      */
     @Nonnull
-    public final CommandLine registerArg(@Nonnull final Arg arg) {
+    public CommandLine registerArg(@Nonnull final Arg arg) {
 
         registeredArgs.put("-" + arg.getSymbol(), arg);
 
@@ -322,9 +322,8 @@ public final class CommandLine {
      * @throws ArgsInvalidException on invalid command line arguments.
      */
     @Nonnull
-    public final Set<Arg> parseArgs(@Nonnull final String... args) throws ArgsInvalidException {
+    public Set<Arg> parseArgs(@Nonnull final String... args) throws ArgsInvalidException {
 
-        Set<Arg> commandLineArgs = new HashSet<>();
         if (requiredCount > 0 && (args == null || args.length < requiredCount)) {
 
             throw new ArgsInvalidException(String.format(
@@ -333,6 +332,7 @@ public final class CommandLine {
             ));
         }
 
+        final Set<Arg> commandLineArgs = new HashSet<>();
         final ArgWithArgument[] lastArgWithArguments = new ArgWithArgument[1];
         Arrays.stream(args).forEach(arg -> {
             Optional<Arg> argOpt = parseArg(arg);
@@ -361,7 +361,7 @@ public final class CommandLine {
 
 
     @Nonnull
-    private final Optional<Arg> parseArg(@Nonnull final String argString) {
+    private Optional<Arg> parseArg(@Nonnull final String argString) {
 
         final String argStringTrimmed = argString.trim();
         if (argStringTrimmed.length() == 0) {

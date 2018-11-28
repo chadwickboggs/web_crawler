@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -31,8 +32,7 @@ public final class WebCrawler implements Runnable {
 
     private static final String USAGE_FILENAME = "usage.txt";
 
-    private CommandLine commandLine;
-    private String domainName;
+    private final CommandLine commandLine;
 
 
     /**
@@ -66,7 +66,7 @@ public final class WebCrawler implements Runnable {
     public static CommandLine parseCommandLineArguments(@Nullable final String... args)
         throws ArgsInvalidException {
 
-        CommandLine commandLine = new CommandLine();
+        final CommandLine commandLine = new CommandLine();
         commandLine.registerArg(new CommandLine.Arg('h', "help", false));
         commandLine.registerArg(new CommandLine.Arg('u', "usage", false));
         commandLine.registerArg(new CommandLine.ArgWithArgument(
@@ -81,12 +81,13 @@ public final class WebCrawler implements Runnable {
 
 
     @Nonnull
-    private static final String getUsage() {
+    private static String getUsage() {
 
-        StringBuilder buf = new StringBuilder();
+        final StringBuilder buf = new StringBuilder();
         try (BufferedReader bufferedReader =
                  new BufferedReader(new InputStreamReader(
-                     WebCrawler.class.getClassLoader().getResourceAsStream(USAGE_FILENAME), Charset.defaultCharset())
+                     Thread.currentThread().getContextClassLoader()
+                         .getResourceAsStream(USAGE_FILENAME), Charset.defaultCharset())
                  )) {
 
             String line;
@@ -117,10 +118,15 @@ public final class WebCrawler implements Runnable {
     }
 
 
+    private static boolean test(CommandLine.Arg arg) {
+        return (arg instanceof CommandLine.ArgWithArgument);
+    }
+
+
     @Override
     public void run() {
 
-        Set<CommandLine.Arg> parsedArgs = commandLine.getParsedArgs();
+        final Set<CommandLine.Arg> parsedArgs = commandLine.getParsedArgs();
 
         if (parsedArgs.contains(new CommandLine.Arg('h'))
             || parsedArgs.contains(new CommandLine.Arg('u'))) {
@@ -131,9 +137,9 @@ public final class WebCrawler implements Runnable {
         }
 
         if (parsedArgs.contains(new CommandLine.ArgWithArgument('t'))) {
-            Optional<CommandLine.Arg> argOpt = parsedArgs.stream()
+            final Optional<CommandLine.Arg> argOpt = parsedArgs.stream()
                 .filter(arg -> Character.valueOf('t').equals(arg.getSymbol()))
-                .filter(arg -> (arg instanceof CommandLine.ArgWithArgument))
+                .filter(WebCrawler::test)
                 .findFirst();
             if (!argOpt.isPresent()) {
                 System.err.println(getUsage());
@@ -141,10 +147,10 @@ public final class WebCrawler implements Runnable {
                 System.exit(3);
             }
 
-            String urlString = ((CommandLine.ArgWithArgument) argOpt.get()).getArgument();
+            final String urlString = ((CommandLine.ArgWithArgument) argOpt.get()).getArgument();
             try {
-                URL startUrl = new URL(urlString);
-                String domainNameLimit = extractDomainName(startUrl);
+                final URL startUrl = new URL(urlString);
+                final String domainNameLimit = extractDomainName(startUrl);
                 webCrawl(startUrl, domainNameLimit, 0, new HashSet<URL>(), System.out);
             }
             catch (MalformedURLException e) {
@@ -169,17 +175,17 @@ public final class WebCrawler implements Runnable {
     @Nonnull
     private String extractDomainName(@Nonnull final URL startUrl) {
 
-        String[] split = startUrl.getHost().split("\\.");
+        final String[] split = startUrl.getHost().split("\\.");
         if (split.length < 2) {
             throw new RuntimeException(String.format(
                 "URL must contain at least one '.' character.  URL: \"%s\"", startUrl
             ));
         }
 
-        StringBuilder buf = new StringBuilder();
+        final StringBuilder buf = new StringBuilder();
         buf.append(split[split.length - 2]).append(".").append(split[split.length - 1]);
 
-        return buf.toString().toLowerCase();
+        return buf.toString().toLowerCase(Locale.ENGLISH);
     }
 
 
@@ -218,14 +224,14 @@ public final class WebCrawler implements Runnable {
     @Nonnull
     private Set<URL> listUrls(@Nonnull final URL url) throws IOException {
 
-        Set<URL> urls = new HashSet<>();
+        final Set<URL> urls = new HashSet<>();
 
         String line;
         try (BufferedReader reader =
                  new BufferedReader(new InputStreamReader(url.openStream(), Charset.defaultCharset()))) {
 
             while ((line = reader.readLine()) != null) {
-                Matcher matcher = URL_PATTERN.matcher(line);
+                final Matcher matcher = URL_PATTERN.matcher(line);
                 while (matcher.find()) {
                     for (int i = 1; i <= matcher.groupCount(); i++) {
                         String group = "";
