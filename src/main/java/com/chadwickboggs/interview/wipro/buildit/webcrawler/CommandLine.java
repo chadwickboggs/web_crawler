@@ -1,5 +1,7 @@
 package com.chadwickboggs.interview.wipro.buildit.webcrawler;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,7 +123,7 @@ public final class CommandLine {
             if (symbol != null) {
                 buf.append("-").append(symbol);
             }
-            else if (name != null && name.length() != 0) {
+            else if (StringUtils.isNoneBlank(name)) {
                 buf.append("--").append(name);
             }
 
@@ -272,11 +274,11 @@ public final class CommandLine {
             if (symbol != null) {
                 buf.append("-").append(symbol);
             }
-            else if (name != null && name.length() != 0) {
+            else if (StringUtils.isNoneBlank(name)) {
                 buf.append("--").append(name);
             }
 
-            if (argument != null && argument.length() != 0) {
+            if (StringUtils.isNoneBlank(argument)) {
                 buf.append(" ").append(argument);
             }
 
