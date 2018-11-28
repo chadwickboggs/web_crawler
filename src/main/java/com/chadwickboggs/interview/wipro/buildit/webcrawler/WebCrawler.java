@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -83,10 +84,11 @@ public final class WebCrawler implements Runnable {
     private static final String getUsage() {
 
         StringBuilder buf = new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                WebCrawler.class.getClassLoader().getResourceAsStream(USAGE_FILENAME)
-            ));
+        try (BufferedReader bufferedReader =
+                 new BufferedReader(new InputStreamReader(
+                     WebCrawler.class.getClassLoader().getResourceAsStream(USAGE_FILENAME), Charset.defaultCharset())
+                 )) {
+
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 buf.append(line).append("\n");
@@ -216,29 +218,32 @@ public final class WebCrawler implements Runnable {
     @Nonnull
     private Set<URL> listUrls(@Nonnull final URL url) throws IOException {
 
-        String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-
         Set<URL> urls = new HashSet<>();
-        while ((line = reader.readLine()) != null) {
-            Matcher matcher = URL_PATTERN.matcher(line);
-            while (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    String group = "";
-                    try {
-                        group = matcher.group(i);
-                        urls.add(new URL(group));
-                    }
-                    catch (MalformedURLException e) {
+
+        String line;
+        try (BufferedReader reader =
+                 new BufferedReader(new InputStreamReader(url.openStream(), Charset.defaultCharset()))) {
+
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = URL_PATTERN.matcher(line);
+                while (matcher.find()) {
+                    for (int i = 1; i <= matcher.groupCount(); i++) {
+                        String group = "";
                         try {
-                            group = url + "/" + group;
+                            group = matcher.group(i);
                             urls.add(new URL(group));
                         }
-                        catch (MalformedURLException muE) {
-                            System.err.println(String.format(
-                                "Error parsing URL in page.  Page: \"%s\", URL: \"%s\"",
-                                url, group
-                            ));
+                        catch (MalformedURLException e) {
+                            try {
+                                group = url + "/" + group;
+                                urls.add(new URL(group));
+                            }
+                            catch (MalformedURLException muE) {
+                                System.err.println(String.format(
+                                    "Error parsing URL in page.  Page: \"%s\", URL: \"%s\"",
+                                    url, group
+                                ));
+                            }
                         }
                     }
                 }

@@ -121,7 +121,7 @@ public final class CommandLine {
             if (symbol != null) {
                 buf.append("-").append(symbol);
             }
-            else if (name != null || name.length() != 0) {
+            else if (name != null && name.length() != 0) {
                 buf.append("--").append(name);
             }
 
@@ -130,7 +130,7 @@ public final class CommandLine {
 
 
         @Override
-        @Nullable
+        @Nonnull
         public String toString() {
 
             return "Arg{"
@@ -142,7 +142,7 @@ public final class CommandLine {
 
 
         @Override
-        public boolean equals(@Nonnull final Object o) {
+        public boolean equals(Object o) {
 
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -272,11 +272,11 @@ public final class CommandLine {
             if (symbol != null) {
                 buf.append("-").append(symbol);
             }
-            else if (name != null || name.length() != 0) {
+            else if (name != null && name.length() != 0) {
                 buf.append("--").append(name);
             }
 
-            if (argument != null || argument.length() != 0) {
+            if (argument != null && argument.length() != 0) {
                 buf.append(" ").append(argument);
             }
 
@@ -326,8 +326,8 @@ public final class CommandLine {
         if (requiredCount > 0 && (args == null || args.length < requiredCount)) {
 
             throw new ArgsInvalidException(String.format(
-                "Insufficient number of arguments parsed.  Required Count: %n",
-                commandLineArgs
+                "Insufficient number of arguments parsed.  Required Count: %d",
+                requiredCount
             ));
         }
 
@@ -349,8 +349,8 @@ public final class CommandLine {
 
         if (commandLineArgs.size() < requiredCount) {
             throw new ArgsInvalidException(String.format(
-                "Insufficient number of arguments parsed.  Required Count: %n",
-                commandLineArgs
+                "Insufficient number of arguments parsed.  Required Count: %d",
+                requiredCount
             ));
         }
 
